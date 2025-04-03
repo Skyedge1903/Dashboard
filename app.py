@@ -109,6 +109,10 @@ def update_active_link(pathname):
 
     return [active_style if page == active_page else base_style for page in page_names.keys()]
 
+@app.server.route('/favicon.ico')
+def favicon():
+    return app.server.send_static_file('favicon.ico')
+
 if __name__ == '__main__':
     # Pour tester localement uniquement
     port = int(os.environ.get("PORT", 8050))  # Utilise le port Heroku ou 8050 en local
