@@ -1,0 +1,7 @@
+.graph-card {
+    transition: transform 0.2s ease;
+}
+
+.graph-card:hover {
+    transform: perspective(1000px) rotateY(-2deg);  /* Effet d'inclinaison 3D */
+}
