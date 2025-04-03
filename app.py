@@ -41,6 +41,7 @@ for page in page_names.keys():
         logger.error(f"Erreur lors du chargement de {page}: {str(e)}")
         pages[page] = html.Div(f"Erreur : Module {page} non trouvé", style={'color': 'red'})
 
+
 # Sommaire avec un design harmonieux
 def create_sidebar():
     return html.Div(
@@ -70,6 +71,7 @@ def create_sidebar():
                'overflow': 'hidden'}
     )
 
+
 # Mise en page principale
 app.layout = html.Div([
     dcc.Location(id='url', refresh=True),
@@ -82,6 +84,7 @@ app.layout = html.Div([
 ], style={'margin': '0', 'padding': '0', 'height': '100vh', 'width': '100vw', 'overflow': 'hidden',
           'background': 'linear-gradient(135deg, #2a3a50 0%, #3b4a60 100%)', 'position': 'fixed', 'top': '0',
           'left': '0'})
+
 
 # Callback pour gérer le changement de page
 @app.callback(
@@ -103,6 +106,7 @@ def display_page(pathname):
                                              'fontFamily': 'Arial, sans-serif'}))
     return html.Div(layout, id=f'page-content-{page}', style={'height': '100%', 'width': '100%'}), page
 
+
 # Callback pour mettre à jour le style des boutons
 @app.callback(
     [Output(f"nav-link-{page}", "style") for page in page_names.keys()],
@@ -123,6 +127,7 @@ def update_active_link(pathname):
 
     return [active_style if page == active_page else base_style for page in page_names.keys()]
 
+
 # Route pour favicon
 @app.server.route('/favicon.ico')
 def favicon():
@@ -131,6 +136,7 @@ def favicon():
     except FileNotFoundError:
         logger.warning("Favicon.ico non trouvé")
         return '', 204  # Réponse vide avec statut 204 (No Content)
+
 
 # Route pour la page racine
 @app.server.route('/')
