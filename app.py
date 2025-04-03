@@ -116,4 +116,4 @@ def favicon():
 if __name__ == '__main__':
     # Pour tester localement uniquement
     port = int(os.environ.get("PORT", 8050))  # Utilise le port Heroku ou 8050 en local
-    app.run_server(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=False)
