@@ -4,10 +4,23 @@ import dash
 from dash import html, dcc, Output, Input, State, no_update
 import importlib
 import os
+import flask
+import logging
+
+# Configure le logging pour diagnostiquer les problèmes
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Initialisation du serveur Flask
+server = flask.Flask(__name__)
+
+# Initialisation de l'application Dash
+app = dash.Dash(__name__, server=server, suppress_callback_exceptions=True)
+app.title = "Financial Dashboard"
 
 # Définition des noms des pages et leurs chemins
 page_names = {
-    "page1": {"name": "Accueil", "path": "/accueil", "icon": "fas/fa-home"},
+    "page1": {"name": "Accueil", "path": "/accueil", "icon": "fas fa-home"},
     "page5": {"name": "Desinflationary bust", "path": "/Desinflationary-bust", "icon": "fas fa-chart-bar"},
     "page4": {"name": "Desinflationary boom", "path": "/Desinflationary-boom", "icon": "fas fa-chart-bar"},
     "page3": {"name": "Inflationary bust", "path": "/Inflationary-bust", "icon": "fas fa-chart-bar"},
@@ -19,14 +32,12 @@ page_names = {
 pages = {}
 for page in page_names.keys():
     try:
+        logger.info(f"Chargement du module {page}")
         module = importlib.import_module(page)
         pages[page] = module.layout
-    except ImportError:
+    except ImportError as e:
+        logger.error(f"Erreur lors du chargement de {page}: {str(e)}")
         pages[page] = html.Div(f"Erreur : Module {page} non trouvé", style={'color': 'red'})
-
-# Initialisation de l'application Dash
-app = dash.Dash(__name__, suppress_callback_exceptions=True)
-server = app.server  # Point d'entrée WSGI pour Gunicorn
 
 # Sommaire avec un design harmonieux
 def create_sidebar():
@@ -78,6 +89,7 @@ app.layout = html.Div([
     prevent_initial_call=False
 )
 def display_page(pathname):
+    logger.info(f"Changement de page vers {pathname}")
     if pathname is None or pathname == '/':
         page = "page1"
     else:
@@ -109,11 +121,21 @@ def update_active_link(pathname):
 
     return [active_style if page == active_page else base_style for page in page_names.keys()]
 
+# Route pour favicon
 @app.server.route('/favicon.ico')
 def favicon():
-    return app.server.send_static_file('favicon.ico')
+    try:
+        return flask.send_from_directory(os.path.join(app.server.root_path, 'static'), 'favicon.ico')
+    except FileNotFoundError:
+        logger.warning("Favicon.ico non trouvé")
+        return '', 204  # Réponse vide avec statut 204 (No Content)
+
+# Route pour la page racine
+@app.server.route('/')
+def serve_root():
+    return flask.redirect('/accueil')
 
 if __name__ == '__main__':
-    # Pour tester localement uniquement
-    port = int(os.environ.get("PORT", 8050))  # Utilise le port Heroku ou 8050 en local
-    app.run(host='0.0.0.0', port=port, debug=False)
+    port = int(os.environ.get("PORT", 8050))
+    logger.info(f"Lancement local sur le port {port}")
+    app.run_server(host='0.0.0.0', port=port, debug=False)
