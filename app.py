@@ -16,6 +16,8 @@ server = flask.Flask(__name__)
 
 # Initialisation de l'application Dash
 app = dash.Dash(__name__, server=server, suppress_callback_exceptions=True)
+app.suppress_callback_exceptions = True
+app.serve_locally = False
 app.title = "Financial Dashboard"
 
 # Définition des noms des pages et leurs chemins
@@ -137,5 +139,4 @@ def serve_root():
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8050))
-    logger.info(f"Lancement local sur le port {port}")
     app.run_server(host='0.0.0.0', port=port, debug=False)
