@@ -3,10 +3,11 @@
 import dash
 from dash import html, dcc, Output, Input, State, no_update
 import importlib
+import os
 
 # Définition des noms des pages et leurs chemins
 page_names = {
-    "page1": {"name": "Accueil", "path": "/accueil", "icon": "fas fa-home"},
+    "page1": {"name": "Accueil", "path": "/accueil", "icon": "fas/fa-home"},
     "page5": {"name": "Desinflationary bust", "path": "/Desinflationary-bust", "icon": "fas fa-chart-bar"},
     "page4": {"name": "Desinflationary boom", "path": "/Desinflationary-boom", "icon": "fas fa-chart-bar"},
     "page3": {"name": "Inflationary bust", "path": "/Inflationary-bust", "icon": "fas fa-chart-bar"},
@@ -64,7 +65,7 @@ app.layout = html.Div([
                                          'width': 'calc(100vw - 300px)' if len(page_names) > 1 else '100vw',
                                          'overflow': 'hidden', 'padding': '15px 30px 30px 15px',
                                          'backgroundColor': '#2a3a50'}),
-    dcc.Store(id='current-page', data='page1'),  # Stocke la page actuelle
+    dcc.Store(id='current-page', data='page1'),
 ], style={'margin': '0', 'padding': '0', 'height': '100vh', 'width': '100vw', 'overflow': 'hidden',
           'background': 'linear-gradient(135deg, #2a3a50 0%, #3b4a60 100%)', 'position': 'fixed', 'top': '0',
           'left': '0'})
@@ -108,3 +109,7 @@ def update_active_link(pathname):
 
     return [active_style if page == active_page else base_style for page in page_names.keys()]
 
+if __name__ == '__main__':
+    # Pour tester localement uniquement
+    port = int(os.environ.get("PORT", 8050))  # Utilise le port Heroku ou 8050 en local
+    app.run_server(host='0.0.0.0', port=port, debug=False)
