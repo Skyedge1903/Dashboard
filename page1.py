@@ -15,7 +15,7 @@ df_wtisplc['observation_date'] = pd.to_datetime(df_wtisplc['observation_date'])
 
 # Filtrer pour mars 2003 - février 2025
 start_date = '2003-03-01'
-end_date = '2025-02-28'
+end_date = '2025-11-01'
 df_t10yie_filtered = df_t10yie[(df_t10yie['observation_date'] >= start_date) & (df_t10yie['observation_date'] <= end_date)]
 df_m2sl_filtered = df_m2sl[(df_m2sl['observation_date'] >= start_date) & (df_m2sl['observation_date'] <= end_date)]
 df_wtisplc_filtered = df_wtisplc[(df_wtisplc['observation_date'] >= start_date) & (df_wtisplc['observation_date'] <= end_date)]
