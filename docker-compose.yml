@@ -1,14 +1,14 @@
-version: '3.8'  # Version récente de Compose
+version: '3.8'
 
 services:
-  app:  # Nom du service (ton conteneur)
-    build: .  # Build l'image à partir du Dockerfile dans le dossier courant
-    image: tonusername/mon-app-dash:latest  # Optionnel : Nom de l'image pour push/pull
-    ports:
-      - "8050:8050"  # Mappe le port hôte:conteneur
-    environment:  # Variables d'env si besoin
+  app:
+    build: .
+    environment:
       - PYTHONUNBUFFERED=1
-    restart: always  # Restart auto en cas de crash
-    # Ajoute des volumes si tu as des données persistantes, ex :
-    # volumes:
-    #   - ./data:/app/data
+    restart: always
+    networks:
+      - globalNetwork
+
+networks:
+  globalNetwork:
+    external: true
