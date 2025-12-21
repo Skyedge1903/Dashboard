@@ -27,7 +27,7 @@ page_names = {
     "page5": {"name": "Desinflationary boom", "path": "/Desinflationary-bust", "icon": "fas fa-chart-bar"},
     "page3": {"name": "Inflationary bust", "path": "/Inflationary-bust", "icon": "fas fa-chart-bar"},
     "page2": {"name": "Inflationary boom", "path": "/Inflationary-boom", "icon": "fas fa-chart-bar"},
-    "page6": {"name": "Ethereum Flippening", "path": "/Ethereum-flippening", "icon": "fas fa-chart-bar"},
+    # "page6": {"name": "Ethereum Flippening", "path": "/Ethereum-flippening", "icon": "fas fa-chart-bar"},
 }
 
 # Préchargement des layouts des pages
@@ -146,4 +146,5 @@ def serve_root():
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 8050)))
+
 
