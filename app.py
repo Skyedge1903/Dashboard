@@ -39,13 +39,36 @@ app.index_string = '''
         <style type="text/css">
             label {
                 position: relative;
-                top: 5mm;
+                top: 8px;
                 vertical-align: middle;
                 line-height: 1.5;
             }
             .rc-slider-mark-text {
                 position: relative;
-                top: 8mm;
+                top: 20px;
+                vertical-align: middle;
+                line-height: 1.5;
+                white-space: nowrap;
+                text-align: center;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                transform: none !important;
+            }
+            .rc-slider-mark-text-active {
+                position: relative;
+                top: 20px;
+                vertical-align: middle;
+                line-height: 1.5;
+                white-space: nowrap;
+                text-align: center;
+                writing-mode: vertical-rl;
+                text-orientation: mixed;
+                transform: none !important;
+            }
+            .rc-slider-mark {
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
         </style>
     </head>
