@@ -1,198 +1,145 @@
 # app.py
-
 import dash
-from dash import html, dcc, Output, Input
+from dash import html, dcc, Output, Input, State, no_update
 import importlib
+import os
 import flask
 import logging
 
-# -----------------------------------------------------------------------------
-# Logging
-# -----------------------------------------------------------------------------
+# Configure le logging pour diagnostiquer les problèmes
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# -----------------------------------------------------------------------------
-# Flask server
-# -----------------------------------------------------------------------------
+# Initialisation du serveur Flask
 server = flask.Flask(__name__)
 
-# -----------------------------------------------------------------------------
-# Dash app
-# -----------------------------------------------------------------------------
+# Initialisation de l'application Dash avec les stylesheets externes pour Bootstrap et Font Awesome
 app = dash.Dash(
     __name__,
     server=server,
-    suppress_callback_exceptions=True
+    suppress_callback_exceptions=True,
+    external_stylesheets=[
+        'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'
+    ]
 )
-
+app.suppress_callback_exceptions = True
+app.serve_locally = False
 app.title = "Financial Dashboard"
 
-# -----------------------------------------------------------------------------
-# GLOBAL CSS (FINAL FIX)
-# -----------------------------------------------------------------------------
-app.index_string = """
-<!DOCTYPE html>
-<html>
-<head>
-    {%metas%}
-    <title>{%title%}</title>
-    {%favicon%}
-    {%css%}
-
-    <style>
-        /* RESET */
-        * {
-            box-sizing: border-box;
-        }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: Arial, sans-serif;
-        }
-
-        /* DEFINITIVE LABEL FIX */
-        label {
-            display: flex !important;
-            align-items: center !important;
-            height: 100% !important;
-            line-height: 1 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        /* NORMALIZE INPUT HEIGHT */
-        input, select, textarea {
-            height: 36px;
-            line-height: 36px;
-            padding: 0 8px;
-        }
-
-        /* COMMON FORM ROW */
-        .form-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            height: 36px;
-        }
-    </style>
-</head>
-
-<body>
-    {%app_entry%}
-    <footer>
-        {%config%}
-        {%scripts%}
-        {%renderer%}
-    </footer>
-</body>
-</html>
-"""
-
-# -----------------------------------------------------------------------------
-# Pages configuration
-# -----------------------------------------------------------------------------
+# Définition des noms des pages et leurs chemins
 page_names = {
     "page1": {"name": "Accueil", "path": "/accueil", "icon": "fas fa-home"},
-    "page2": {"name": "Inflationary boom", "path": "/Inflationary-boom", "icon": "fas fa-chart-bar"},
+    "page4": {"name": "Desinflationary bust", "path": "/Desinflationary-boom", "icon": "fas fa-chart-bar"},
+    "page5": {"name": "Desinflationary boom", "path": "/Desinflationary-bust", "icon": "fas fa-chart-bar"},
     "page3": {"name": "Inflationary bust", "path": "/Inflationary-bust", "icon": "fas fa-chart-bar"},
-    "page4": {"name": "Desinflationary boom", "path": "/Desinflationary-boom", "icon": "fas fa-chart-bar"},
-    "page5": {"name": "Desinflationary bust", "path": "/Desinflationary-bust", "icon": "fas fa-chart-bar"},
+    "page2": {"name": "Inflationary boom", "path": "/Inflationary-boom", "icon": "fas fa-chart-bar"},
+    # "page6": {"name": "Ethereum Flippening", "path": "/Ethereum-flippening", "icon": "fas fa-chart-bar"},
 }
 
-# -----------------------------------------------------------------------------
-# Load pages
-# -----------------------------------------------------------------------------
+# Préchargement des layouts des pages
 pages = {}
-for page in page_names:
+for page in page_names.keys():
     try:
-        pages[page] = importlib.import_module(page).layout
-    except Exception as e:
-        logger.error(e)
-        pages[page] = html.Div("Page introuvable", style={"color": "red"})
+        logger.info(f"Chargement du module {page}")
+        module = importlib.import_module(page)
+        pages[page] = module.layout
+    except ImportError as e:
+        logger.error(f"Erreur lors du chargement de {page}: {str(e)}")
+        pages[page] = html.Div(f"Erreur : Module {page} non trouvé", style={'color': 'red'})
 
-# -----------------------------------------------------------------------------
-# Sidebar
-# -----------------------------------------------------------------------------
+# Sommaire avec un design harmonieux
 def create_sidebar():
     return html.Div(
         [
-            html.H2(
-                "Dashboard",
-                style={
-                    "color": "white",
-                    "textAlign": "center",
-                    "padding": "24px 0"
-                }
+            html.H2("Dashboard",
+                    style={'fontSize': '30px', 'color': '#ffffff', 'textAlign': 'center', 'padding': '25px 0',
+                           'fontFamily': 'Arial, sans-serif', 'letterSpacing': '1.5px'}),
+            html.Div(
+                [
+                    dcc.Link(
+                        [html.I(className=f"{page_data['icon']} mr-2",
+                                style={'marginRight': '10px', 'fontSize': '20px'}), page_data['name']],
+                        href=page_data['path'],
+                        id=f"nav-link-{page}",
+                        className="nav-link",
+                        style={'padding': '15px 20px', 'color': '#ffffff', 'borderRadius': '10px',
+                               'marginBottom': '15px', 'display': 'flex', 'alignItems': 'center',
+                               'textDecoration': 'none', 'fontSize': '18px', 'fontFamily': 'Arial, sans-serif',
+                               'transition': 'background-color 0.3s, transform 0.2s'}
+                    ) for page, page_data in page_names.items()
+                ],
+                style={'padding': '0 20px'}
             ),
-            *[
-                dcc.Link(
-                    page_data["name"],
-                    href=page_data["path"],
-                    id=f"nav-link-{page}",
-                    style={
-                        "display": "flex",
-                        "alignItems": "center",
-                        "padding": "14px 20px",
-                        "color": "white",
-                        "textDecoration": "none",
-                        "borderRadius": "8px",
-                        "marginBottom": "12px"
-                    }
-                )
-                for page, page_data in page_names.items()
-            ],
         ],
-        style={
-            "width": "280px",
-            "height": "100vh",
-            "position": "fixed",
-            "left": 0,
-            "top": 0,
-            "background": "#1f2a44"
-        },
+        style={'width': '300px', 'background': 'linear-gradient(180deg, #1f2a44 0%, #3b2f5b 100%)', 'height': '100vh',
+               'position': 'fixed', 'top': '0', 'left': '0', 'boxShadow': '2px 0 15px rgba(0, 0, 0, 0.3)',
+               'overflow': 'hidden'}
     )
 
-# -----------------------------------------------------------------------------
-# Layout
-# -----------------------------------------------------------------------------
-app.layout = html.Div(
-    [
-        dcc.Location(id="url"),
-        create_sidebar(),
-        html.Div(
-            id="page-container",
-            style={
-                "marginLeft": "280px",
-                "minHeight": "100vh",
-                "padding": "24px",
-                "background": "#2a3a50"
-            },
-        ),
-    ]
-)
+# Mise en page principale
+app.layout = html.Div([
+    dcc.Location(id='url', refresh=True),
+    create_sidebar() if len(page_names) > 1 else None,
+    html.Div(id='page-container', style={'marginLeft': '300px' if len(page_names) > 1 else '0', 'height': '100vh',
+                                         'width': 'calc(100vw - 300px)' if len(page_names) > 1 else '100vw',
+                                         'overflow': 'hidden', 'padding': '15px 30px 30px 15px',
+                                         'backgroundColor': '#2a3a50'}),
+    dcc.Store(id='current-page', data='page1'),
+], style={'margin': '0', 'padding': '0', 'height': '100vh', 'width': '100vw', 'overflow': 'hidden',
+          'background': 'linear-gradient(135deg, #2a3a50 0%, #3b4a60 100%)', 'position': 'fixed', 'top': '0',
+          'left': '0'})
 
-# -----------------------------------------------------------------------------
-# Routing
-# -----------------------------------------------------------------------------
+# Callback pour gérer le changement de page
 @app.callback(
-    Output("page-container", "children"),
-    Input("url", "pathname"),
+    Output('page-container', 'children'),
+    Output('current-page', 'data'),
+    Input('url', 'pathname'),
+    prevent_initial_call=False
 )
-def render_page(pathname):
-    if not pathname or pathname == "/":
-        pathname = "/accueil"
+def display_page(pathname):
+    logger.info(f"Changement de page vers {pathname}")
+    if pathname is None or pathname == '/':
+        page = "page1"
+    else:
+        path_to_page = {data['path']: page for page, data in page_names.items()}
+        page = path_to_page.get(pathname, "page1")
+    layout = pages.get(page, html.Div("Page non trouvée",
+                                      style={'padding': '20px', 'fontSize': '24px', 'color': '#ff4d4d',
+                                             'fontFamily': 'Arial, sans-serif'}))
+    return html.Div(layout, id=f'page-content-{page}', style={'height': '100%', 'width': '100%'}), page
 
-    page = next(
-        (k for k, v in page_names.items() if v["path"] == pathname),
-        "page1"
-    )
-    return pages[page]
+# Callback pour mettre à jour le style des boutons
+@app.callback(
+    [Output(f"nav-link-{page}", "style") for page in page_names.keys()],
+    Input('url', 'pathname')
+)
+def update_active_link(pathname):
+    base_style = {'padding': '15px 20px', 'color': '#ffffff', 'borderRadius': '10px', 'marginBottom': '15px',
+                  'display': 'flex', 'alignItems': 'center', 'textDecoration': 'none', 'fontSize': '18px',
+                  'fontFamily': 'Arial, sans-serif', 'transition': 'background-color 0.3s, transform 0.2s'}
+    active_style = base_style.copy()
+    active_style.update({'backgroundColor': 'rgba(0, 135, 147, 0.8)', 'color': 'white', 'transform': 'scale(1.05)'})
+    if pathname is None or pathname == '/':
+        active_page = "page1"
+    else:
+        path_to_page = {data['path']: page for page, data in page_names.items()}
+        active_page = path_to_page.get(pathname, "page1")
+    return [active_style if page == active_page else base_style for page in page_names.keys()]
 
-# -----------------------------------------------------------------------------
-# Run
-# -----------------------------------------------------------------------------
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8050, debug=False)
+# Route pour favicon
+@app.server.route('/favicon.ico')
+def favicon():
+    try:
+        return flask.send_from_directory(os.path.join(app.server.root_path, 'static'), 'favicon.ico')
+    except FileNotFoundError:
+        logger.warning("Favicon.ico non trouvé")
+        return '', 204  # Réponse vide avec statut 204 (No Content)
+
+# Route pour la page racine
+@app.server.route('/')
+def serve_root():
+    return flask.redirect('/accueil')
+
+if __name__ == '__main__':
+    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 8050)))
