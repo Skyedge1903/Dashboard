@@ -39,9 +39,13 @@ app.index_string = '''
         <style type="text/css">
             label {
                 position: relative;
-                top: 4mm;
+                top: 5mm;
                 vertical-align: middle;
                 line-height: 1.5;
+            }
+            .rc-slider-mark-text {
+                position: relative;
+                top: 8mm;
             }
         </style>
     </head>
