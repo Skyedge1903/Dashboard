@@ -27,6 +27,34 @@ app.suppress_callback_exceptions = True
 app.serve_locally = False
 app.title = "Financial Dashboard"
 
+# Ajout du CSS personnalisé via index_string
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+        <style type="text/css">
+            label {
+                position: relative;
+                top: 2mm;
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
+
 # Définition des noms des pages et leurs chemins
 page_names = {
     "page1": {"name": "Accueil", "path": "/accueil", "icon": "fas fa-home"},
@@ -80,13 +108,6 @@ def create_sidebar():
 
 # Mise en page principale
 app.layout = html.Div([
-    html.Style(type='text/css', children='''
-        label {
-            position: relative;
-            top: 2mm;
-            vertical-align: middle;
-        }
-    '''),
     dcc.Location(id='url', refresh=True),
     create_sidebar() if len(page_names) > 1 else None,
     html.Div(id='page-container', style={'marginLeft': '300px' if len(page_names) > 1 else '0', 'height': '100vh',
