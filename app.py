@@ -39,8 +39,9 @@ app.index_string = '''
         <style type="text/css">
             label {
                 position: relative;
-                top: 2mm;
+                top: 4mm;
                 vertical-align: middle;
+                line-height: 1.5;
             }
         </style>
     </head>
