@@ -1,5 +1,5 @@
 # Utilisez une image de base Python légère avec la version spécifique demandée
-FROM python:3.9.19-slim
+FROM python:3.12.10-slim
 
 # Définissez des variables d'environnement pour éviter les problèmes de buffering et d'encodage
 ENV PYTHONUNBUFFERED=1
