@@ -3,7 +3,6 @@
 import dash
 from dash import html, dcc, Output, Input
 import importlib
-import os
 import flask
 import logging
 
@@ -30,53 +29,65 @@ app = dash.Dash(
 app.title = "Financial Dashboard"
 
 # -----------------------------------------------------------------------------
-# GLOBAL CSS FIX (CRITICAL)
+# GLOBAL CSS (FINAL FIX)
 # -----------------------------------------------------------------------------
 app.index_string = """
 <!DOCTYPE html>
 <html>
-    <head>
-        {%metas%}
-        <title>{%title%}</title>
-        {%favicon%}
-        {%css%}
-        <style>
-            /* === CSS RESET MINIMAL === */
-            html, body {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                width: 100%;
-                font-family: Arial, sans-serif;
-            }
+<head>
+    {%metas%}
+    <title>{%title%}</title>
+    {%favicon%}
+    {%css%}
 
-            /* === FIX LABEL ALIGNMENT (ROOT CAUSE) === */
-            label {
-                display: inline-flex;
-                align-items: center;
-                line-height: normal;
-                vertical-align: middle;
-            }
+    <style>
+        /* RESET */
+        * {
+            box-sizing: border-box;
+        }
 
-            input, select, textarea {
-                line-height: normal;
-                vertical-align: middle;
-            }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
 
-            /* Prevent flex parents from breaking text alignment */
-            * {
-                box-sizing: border-box;
-            }
-        </style>
-    </head>
-    <body>
-        {%app_entry%}
-        <footer>
-            {%config%}
-            {%scripts%}
-            {%renderer%}
-        </footer>
-    </body>
+        /* DEFINITIVE LABEL FIX */
+        label {
+            display: flex !important;
+            align-items: center !important;
+            height: 100% !important;
+            line-height: 1 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* NORMALIZE INPUT HEIGHT */
+        input, select, textarea {
+            height: 36px;
+            line-height: 36px;
+            padding: 0 8px;
+        }
+
+        /* COMMON FORM ROW */
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 36px;
+        }
+    </style>
+</head>
+
+<body>
+    {%app_entry%}
+    <footer>
+        {%config%}
+        {%scripts%}
+        {%renderer%}
+    </footer>
+</body>
 </html>
 """
 
@@ -85,10 +96,10 @@ app.index_string = """
 # -----------------------------------------------------------------------------
 page_names = {
     "page1": {"name": "Accueil", "path": "/accueil", "icon": "fas fa-home"},
-    "page4": {"name": "Desinflationary bust", "path": "/Desinflationary-boom", "icon": "fas fa-chart-bar"},
-    "page5": {"name": "Desinflationary boom", "path": "/Desinflationary-bust", "icon": "fas fa-chart-bar"},
-    "page3": {"name": "Inflationary bust", "path": "/Inflationary-bust", "icon": "fas fa-chart-bar"},
     "page2": {"name": "Inflationary boom", "path": "/Inflationary-boom", "icon": "fas fa-chart-bar"},
+    "page3": {"name": "Inflationary bust", "path": "/Inflationary-bust", "icon": "fas fa-chart-bar"},
+    "page4": {"name": "Desinflationary boom", "path": "/Desinflationary-boom", "icon": "fas fa-chart-bar"},
+    "page5": {"name": "Desinflationary bust", "path": "/Desinflationary-bust", "icon": "fas fa-chart-bar"},
 }
 
 # -----------------------------------------------------------------------------
@@ -97,14 +108,10 @@ page_names = {
 pages = {}
 for page in page_names:
     try:
-        module = importlib.import_module(page)
-        pages[page] = module.layout
-    except ImportError as e:
-        logger.error(f"Erreur chargement {page}: {e}")
-        pages[page] = html.Div(
-            f"Erreur : module {page} non trouvé",
-            style={"color": "red", "padding": "20px"}
-        )
+        pages[page] = importlib.import_module(page).layout
+    except Exception as e:
+        logger.error(e)
+        pages[page] = html.Div("Page introuvable", style={"color": "red"})
 
 # -----------------------------------------------------------------------------
 # Sidebar
@@ -115,49 +122,36 @@ def create_sidebar():
             html.H2(
                 "Dashboard",
                 style={
-                    "fontSize": "30px",
-                    "color": "#ffffff",
+                    "color": "white",
                     "textAlign": "center",
-                    "padding": "25px 0",
-                    "letterSpacing": "1.5px"
+                    "padding": "24px 0"
                 }
             ),
-            html.Div(
-                [
-                    dcc.Link(
-                        [
-                            html.I(
-                                className=page_data["icon"],
-                                style={"marginRight": "10px", "fontSize": "20px"}
-                            ),
-                            page_data["name"],
-                        ],
-                        href=page_data["path"],
-                        id=f"nav-link-{page}",
-                        style={
-                            "padding": "15px 20px",
-                            "color": "#ffffff",
-                            "borderRadius": "10px",
-                            "marginBottom": "15px",
-                            "display": "flex",
-                            "alignItems": "center",
-                            "textDecoration": "none",
-                            "fontSize": "18px",
-                        },
-                    )
-                    for page, page_data in page_names.items()
-                ],
-                style={"padding": "0 20px"},
-            ),
+            *[
+                dcc.Link(
+                    page_data["name"],
+                    href=page_data["path"],
+                    id=f"nav-link-{page}",
+                    style={
+                        "display": "flex",
+                        "alignItems": "center",
+                        "padding": "14px 20px",
+                        "color": "white",
+                        "textDecoration": "none",
+                        "borderRadius": "8px",
+                        "marginBottom": "12px"
+                    }
+                )
+                for page, page_data in page_names.items()
+            ],
         ],
         style={
-            "width": "300px",
-            "background": "linear-gradient(180deg, #1f2a44 0%, #3b2f5b 100%)",
+            "width": "280px",
             "height": "100vh",
             "position": "fixed",
-            "top": "0",
-            "left": "0",
-            "boxShadow": "2px 0 15px rgba(0,0,0,0.3)",
+            "left": 0,
+            "top": 0,
+            "background": "#1f2a44"
         },
     )
 
@@ -166,15 +160,15 @@ def create_sidebar():
 # -----------------------------------------------------------------------------
 app.layout = html.Div(
     [
-        dcc.Location(id="url", refresh=False),
+        dcc.Location(id="url"),
         create_sidebar(),
         html.Div(
             id="page-container",
             style={
-                "marginLeft": "300px",
+                "marginLeft": "280px",
                 "minHeight": "100vh",
-                "padding": "20px 30px",
-                "backgroundColor": "#2a3a50",
+                "padding": "24px",
+                "background": "#2a3a50"
             },
         ),
     ]
@@ -187,14 +181,15 @@ app.layout = html.Div(
     Output("page-container", "children"),
     Input("url", "pathname"),
 )
-def display_page(pathname):
+def render_page(pathname):
     if not pathname or pathname == "/":
         pathname = "/accueil"
 
-    path_to_page = {v["path"]: k for k, v in page_names.items()}
-    page = path_to_page.get(pathname, "page1")
-
-    return pages.get(page)
+    page = next(
+        (k for k, v in page_names.items() if v["path"] == pathname),
+        "page1"
+    )
+    return pages[page]
 
 # -----------------------------------------------------------------------------
 # Run
