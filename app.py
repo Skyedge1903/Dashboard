@@ -26,7 +26,7 @@ app.title = "Financial Dashboard"
 app.serve_locally = False
 
 # -------------------------------------------------
-# CSS GLOBAL — FIX LABEL ALIGNMENT
+# CSS GLOBAL — FIX LABEL OFFSET (CORRECT WAY)
 # -------------------------------------------------
 app.index_string = """
 <!DOCTYPE html>
@@ -37,7 +37,7 @@ app.index_string = """
         {%favicon%}
         {%css%}
         <style>
-            /* RESET */
+            /* RESET SAFE */
             * {
                 box-sizing: border-box;
             }
@@ -48,27 +48,30 @@ app.index_string = """
                 font-family: Arial, sans-serif;
             }
 
-            /* FIX DASH LABEL ALIGNMENT */
-            label {
-                display: flex !important;
-                align-items: center !important;
-                line-height: normal !important;
-                margin-bottom: 4px;
+            /*
+             FIX DASH LABEL / TEXT OFFSET
+             DO NOT USE FLEX ON LABELS
+            */
+            label,
+            .dash-label,
+            .dash-input label,
+            .dash-dropdown label,
+            .dash-radio-items label,
+            .dash-checklist label,
+            .dash-table-container label {
+                line-height: 1.4 !important;
+                vertical-align: middle !important;
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
             }
 
-            /* FIX INPUT / DROPDOWN WRAPPERS */
-            .dash-input,
-            .dash-dropdown,
-            .dash-radio-items,
-            .dash-checklist {
-                display: flex;
-                align-items: center;
-            }
-
-            /* FIX DCC DROPDOWN INTERNAL */
-            .Select-control {
-                display: flex;
-                align-items: center;
+            /*
+             FIX DCC DROPDOWN INTERNAL TEXT
+            */
+            .Select-control,
+            .Select-value,
+            .Select-value-label {
+                line-height: 1.4 !important;
             }
         </style>
     </head>
@@ -102,7 +105,10 @@ for page in page_names:
         logger.info(f"Loaded {page}")
     except Exception as e:
         logger.error(e)
-        pages[page] = html.Div("Page non trouvée")
+        pages[page] = html.Div(
+            "Page non trouvée",
+            style={"color": "red", "fontSize": "20px", "padding": "20px"},
+        )
 
 # -------------------------------------------------
 # Sidebar
@@ -116,13 +122,17 @@ def create_sidebar():
                     "color": "white",
                     "textAlign": "center",
                     "padding": "25px 0",
+                    "letterSpacing": "1.5px",
                 },
             ),
             html.Div(
                 [
                     dcc.Link(
                         [
-                            html.I(className=data["icon"], style={"marginRight": "10px"}),
+                            html.I(
+                                className=data["icon"],
+                                style={"marginRight": "10px", "fontSize": "18px"},
+                            ),
                             data["name"],
                         ],
                         href=data["path"],
@@ -135,6 +145,7 @@ def create_sidebar():
                             "textDecoration": "none",
                             "borderRadius": "10px",
                             "marginBottom": "12px",
+                            "fontSize": "17px",
                         },
                     )
                     for page, data in page_names.items()
@@ -149,6 +160,7 @@ def create_sidebar():
             "left": "0",
             "top": "0",
             "background": "linear-gradient(180deg, #1f2a44, #3b2f5b)",
+            "boxShadow": "2px 0 15px rgba(0,0,0,0.3)",
         },
     )
 
@@ -164,11 +176,18 @@ app.layout = html.Div(
             style={
                 "marginLeft": "300px",
                 "height": "100vh",
-                "padding": "20px",
+                "padding": "20px 30px",
                 "backgroundColor": "#2a3a50",
+                "overflow": "auto",
             },
         ),
-    ]
+    ],
+    style={
+        "height": "100vh",
+        "width": "100vw",
+        "margin": "0",
+        "padding": "0",
+    },
 )
 
 # -------------------------------------------------
@@ -184,7 +203,7 @@ def display_page(pathname):
     return pages[page]
 
 # -------------------------------------------------
-# Active link
+# Active link styling
 # -------------------------------------------------
 @app.callback(
     [Output(f"nav-link-{p}", "style") for p in page_names],
@@ -204,9 +223,15 @@ def update_links(pathname):
             "textDecoration": "none",
             "borderRadius": "10px",
             "marginBottom": "12px",
+            "fontSize": "17px",
         }
         if page == active:
-            style["backgroundColor"] = "rgba(0,135,147,0.8)"
+            style.update(
+                {
+                    "backgroundColor": "rgba(0,135,147,0.85)",
+                    "transform": "scale(1.03)",
+                }
+            )
         styles.append(style)
 
     return styles
@@ -215,4 +240,4 @@ def update_links(pathname):
 # Run
 # -------------------------------------------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8050, debug=False)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8050)), debug=False)
