@@ -59,7 +59,8 @@ def create_sidebar():
                 [
                     dcc.Link(
                         [html.I(className=f"{page_data['icon']} mr-2",
-                                style={'marginRight': '10px', 'fontSize': '20px'}), page_data['name']],
+                                style={'marginRight': '10px', 'fontSize': '20px', 'verticalAlign': 'middle'}),
+                         page_data['name']],
                         href=page_data['path'],
                         id=f"nav-link-{page}",
                         className="nav-link",
@@ -79,6 +80,13 @@ def create_sidebar():
 
 # Mise en page principale
 app.layout = html.Div([
+    html.Style(type='text/css', children='''
+        label {
+            position: relative;
+            top: 2mm;
+            vertical-align: middle;
+        }
+    '''),
     dcc.Location(id='url', refresh=True),
     create_sidebar() if len(page_names) > 1 else None,
     html.Div(id='page-container', style={'marginLeft': '300px' if len(page_names) > 1 else '0', 'height': '100vh',
