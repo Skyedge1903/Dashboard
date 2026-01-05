@@ -6,9 +6,6 @@ Ce dépôt contient une application web de dashboard financier, accessible en li
 
 Le concept central repose sur une approche d'investissement par quadrants, favorisant la diversification pour faire face aux différents scénarios économiques (prospérité, inflation, récession, déflation).
 
-
-![Quadrants du Portefeuille Permanent - Conditions économiques et actifs](https://mutinyfund.com/wp-content/uploads/2024/03/Four-Macroeconomic-Regimes.jpg)
-
 ![Permanent Portfolio : la stratégie intemporelle d'Harry Browne](https://cdn.prod.website-files.com/68e35eb35dd2bac47a3cd481/69280fe6f319ce7615c0c1f4_Harry%20Browne%20Permanent%20Portfolio.jpg)
 
 
@@ -52,6 +49,8 @@ Accédez au dashboard via votre navigateur (généralement http://localhost:8501
 ## Inspirations et crédits
 
 Ce projet s'inspire fortement du **Portefeuille Permanent** développé par **Harry Browne** dans les années 1980 : une allocation équilibrée (25 % chacun) en actions, obligations longues, liquidités et or, pour performer dans tous les environnements économiques.
+
+![Quadrants du Portefeuille Permanent - Conditions économiques et actifs](https://grandangleeco.com/wp-content/uploads/2021/06/image.png)
 
 Il intègre également les analyses économiques de **Charles Gave**, économiste français libéral, fondateur de Gavekal Research et de l'**Institut des Libertés** (think tank promouvant les idées de liberté économique).
 
