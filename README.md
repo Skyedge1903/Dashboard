@@ -55,7 +55,7 @@ Ce projet s'inspire fortement du **Portefeuille Permanent** développé par **Ha
 
 Il intègre également les analyses économiques de **Charles Gave**, économiste français libéral, fondateur de Gavekal Research et de l'**Institut des Libertés** (think tank promouvant les idées de liberté économique).
 
-![IDL Charles Gave]([img/dashboard.png](https://i.ytimg.com/vi/L_wO08Zd__0/maxresdefault.jpg)).
+![IDL Charles Gave](https://i.ytimg.com/vi/L_wO08Zd__0/maxresdefault.jpg).
 
 ## Licence
 
