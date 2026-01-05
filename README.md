@@ -14,10 +14,12 @@ Le concept central repose sur une approche d'investissement par quadrants, favor
 
 Le graphique le plus intéressant de la page 1 utilise des **boules** colorées pour représenter les tendances principales et secondaires :
 
-- **Boule Rose** : Or (tendance principale : grosse boule ; secondaire : petite boule)
-- **Boule Verte** : ETF Chine + Énergie (Pétrole & Gaz / Uranium)
-- **Boule Rouge** : Yen et Renminbi
-- **Boule Bleue** : Obligations Brésil / Islande
+- **Boule Rose** : Or (point de schelling)
+- **Boule Verte** : ETF Chine + Énergie (toutes les grandes crises commencent par une hausse du prix de l'énergie)
+- **Boule Rouge** : Yen et Renminbi (monnaies avec un indice Big Mac sous évalué)
+- **Boule Bleue** : Obligations Brésil / Islande (quadrant à la plus faible espérence de rendement)
+
+![Dashboard](img/dashboard.png)
 
 La taille distingue la tendance principale (grosse) de la secondaire (petite), tandis que l'intensité de la couleur indique la force de la tendance.
 
@@ -53,8 +55,7 @@ Ce projet s'inspire fortement du **Portefeuille Permanent** développé par **Ha
 
 Il intègre également les analyses économiques de **Charles Gave**, économiste français libéral, fondateur de Gavekal Research et de l'**Institut des Libertés** (think tank promouvant les idées de liberté économique).
 
-![IDL Charles Gave](https://cdn.prod.website-files.com/68e35eb35dd2bac47a3cd481/69280fe6f319ce7615c0c1f4_Harry%20Browne%20Permanent%20Portfolio.jpg)
-
+![IDL Charles Gave]([img/dashboard.png](https://i.ytimg.com/vi/L_wO08Zd__0/maxresdefault.jpg)
 
 ## Licence
 
