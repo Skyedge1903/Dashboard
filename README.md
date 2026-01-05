@@ -18,7 +18,8 @@ Le graphique le plus intéressant de la page 1 utilise des **boules** colorées 
 
 ![Dashboard](img/dashboard.png)
 
-La taille distingue la tendance principale (grosse) de la secondaire (petite), tandis que l'intensité de la couleur indique la force de la tendance.
+La boule située en haut indique une tendance faible, tandis que celle en bas représente une tendance forte. La taille des boules reflète l’intensité de chaque tendance. Une boule marque le début d’une tendance, et l’apparition d’une nouvelle boule signale la fin de la précédente.
+Grâce à la méthode de calcul utilisée, les boules permettent d’anticiper les performances à venir.
 
 ## Technologies utilisées
 
@@ -59,5 +60,7 @@ Il intègre également les analyses économiques de **Charles Gave**, économist
 ## Licence
 
 Open-source (vérifier le fichier LICENSE dans le dépôt, généralement MIT).
+
+Le présent code, le site web qui lui est associé, ainsi que toute infographie ou tout contenu visuel qui pourrait en être extrait, ne constituent en aucun cas un conseil en investissement, une recommandation d’achat ou de vente, ni une incitation à prendre des décisions financières.
 
 Démo en ligne : [https://finance.518.fr/](https://finance.518.fr/)
