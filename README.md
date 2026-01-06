@@ -64,3 +64,8 @@ Open-source (vérifier le fichier LICENSE dans le dépôt, généralement MIT).
 Le présent code, le site web qui lui est associé, ainsi que toute infographie ou tout contenu visuel qui pourrait en être extrait, ne constituent en aucun cas un conseil en investissement, une recommandation d’achat ou de vente, ni une incitation à prendre des décisions financières.
 
 Démo en ligne : [https://finance.518.fr/](https://finance.518.fr/)
+
+## Pour apprendre à faire ce genre de dashboards
+
+Formation complète sur la data science et data analyse [->](https://doc.518.fr/s/VvUJg-V1e)
+[https://doc.518.fr/s/VvUJg-V1e](https://doc.518.fr/s/VvUJg-V1e)
