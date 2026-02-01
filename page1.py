@@ -3,6 +3,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from template import Page
+from datetime import date
 
 # =====================================================================
 # Chargement et filtrage des données
@@ -17,7 +18,7 @@ df_m2sl['observation_date'] = pd.to_datetime(df_m2sl['observation_date'])
 df_wtisplc['observation_date'] = pd.to_datetime(df_wtisplc['observation_date'])
 
 start_date = '2003-03-01'
-end_date = '2025-11-01'
+end_date = date.today().strftime("%Y-%m-%d")
 
 df_t10yie = df_t10yie[(df_t10yie['observation_date'] >= start_date) & (df_t10yie['observation_date'] <= end_date)]
 df_m2sl = df_m2sl[(df_m2sl['observation_date'] >= start_date) & (df_m2sl['observation_date'] <= end_date)]
