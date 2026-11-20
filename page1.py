@@ -28,13 +28,53 @@ df_wtisplc = df_wtisplc[(df_wtisplc['observation_date'] >= start_date) & (df_wti
 # Calcul du ratio pétrole / M2 ajusté
 # =====================================================================
 
-df_combined = pd.merge(df_wtisplc, df_m2sl, on='observation_date')
+gdp_growth_2003_2026 = {
+    2003: 0.028,
+    2004: 0.038,
+    2005: 0.035,
+    2006: 0.028,
+    2007: 0.020,
+    2008: 0.001,
+    2009: -0.026,
+    2010: 0.027,
+    2011: 0.016,
+    2012: 0.023,
+    2013: 0.021,
+    2014: 0.025,
+    2015: 0.029,
+    2016: 0.018,
+    2017: 0.025,
+    2018: 0.030,
+    2019: 0.026,
+    2020: -0.022,
+    2021: 0.061,
+    2022: 0.025,
+    2023: 0.029,
+    2024: 0.028,
+    2025: 0.020,
+    2026: 0.020,
+}
 
-df_combined['year'] = df_combined['observation_date'].dt.year
-g = -0.024
-df_combined['growth_factor'] = (1 + g) ** (df_combined['year'] - 2003)
-df_combined['M2_adjusted'] = df_combined['M2SL'] * df_combined['growth_factor']
-df_combined['ratio'] = df_combined['WTISPLC'] / df_combined['M2_adjusted']
+df_gdp_2003_2026 = (
+    pd.DataFrame(gdp_growth_2003_2026.items(), columns=["year", "gdp_growth"])
+    .sort_values("year")
+    .reset_index(drop=True)
+)
+
+# Facteur cumulé à partir de 2003 (2003 = 1.0)
+df_gdp_2003_2026["gdp_cum_factor"] = (
+    (1.0 + df_gdp_2003_2026["gdp_growth"])
+    .shift(1, fill_value=1.0)
+    .cumprod()
+)
+
+df_combined = pd.merge(df_wtisplc, df_m2sl, on="observation_date")
+df_combined["year"] = df_combined["observation_date"].dt.year
+df_combined = df_combined[df_combined["year"].between(2003, 2026)]
+df_combined = pd.merge(df_combined, df_gdp_2003_2026, on="year", how="left")
+
+df_combined["M2_adjusted"] = df_combined["M2SL"] * df_combined["gdp_cum_factor"]
+df_combined["ratio"] = df_combined["WTISPLC"] / df_combined["M2_adjusted"]
 
 # =====================================================================
 # Inflation mensuelle
