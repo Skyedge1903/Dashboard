@@ -88,24 +88,42 @@ df_combined = pd.merge(
 df_combined['year'] = df_combined['observation_date'].dt.year
 
 # =====================================================================
-# Facteur cumulatif de croissance réelle depuis 2003
+# Croissance réelle cumulée — base 2003 = 1
 # =====================================================================
-growth_df = pd.DataFrame(
-    sorted(gdp_growth_by_year.items()),
-    columns=['year', 'real_gdp_growth']
+base_year = 2003
+last_year = int(df_combined['year'].max())
+
+missing_years = [
+    year
+    for year in range(base_year + 1, last_year + 1)
+    if year not in gdp_growth_by_year
+]
+
+if missing_years:
+    raise ValueError(
+        f"Taux de croissance du PIB manquants : {missing_years}"
+    )
+
+growth_factors = {base_year: 1.0}
+
+for year in range(base_year + 1, last_year + 1):
+    growth_factors[year] = (
+        growth_factors[year - 1]
+        * (1.0 + gdp_growth_by_year[year])
+    )
+
+df_combined['cumulative_factor'] = (
+    df_combined['year'].map(growth_factors)
 )
 
-growth_df['cumulative_factor'] = (
-    1 + growth_df['real_gdp_growth']
-).cumprod()
+df_combined['M2_adjusted'] = (
+    df_combined['M2SL']
+    / df_combined['cumulative_factor']
+)
 
-# 2003 est l'année de référence : son facteur cumulatif doit être 1
-growth_df.loc[growth_df['year'] == 2003, 'cumulative_factor'] = 1.0
-
-df_combined = df_combined.merge(
-    growth_df[['year', 'cumulative_factor']],
-    on='year',
-    how='left'
+df_combined['ratio'] = (
+    df_combined['WTISPLC']
+    / df_combined['M2_adjusted']
 )
 
 # =====================================================================
